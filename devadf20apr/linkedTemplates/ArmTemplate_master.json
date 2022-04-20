@@ -7,13 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "devadf20apr"
 		},
-		"2Ls_storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of '2Ls_storage'"
+		"LS_AKV_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://azkeyvault20apr.vault.azure.net/"
 		},
-		"LS_STORAGE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_STORAGE'"
+		"ls_storage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "secretyakub20apr"
 		},
 		"containerUri": {
 			"type": "string",
@@ -42,11 +42,11 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
-					"2Ls_storage_connectionString": {
-						"value": "[parameters('2Ls_storage_connectionString')]"
+					"LS_AKV_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_AKV_properties_typeProperties_baseUrl')]"
 					},
-					"LS_STORAGE_connectionString": {
-						"value": "[parameters('LS_STORAGE_connectionString')]"
+					"ls_storage_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('ls_storage_properties_typeProperties_connectionString_secretName')]"
 					}
 				}
 			},

@@ -7,13 +7,13 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "devadf20apr"
 		},
-		"2Ls_storage_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of '2Ls_storage'"
+		"LS_AKV_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://azkeyvault20apr.vault.azure.net/"
 		},
-		"LS_STORAGE_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LS_STORAGE'"
+		"ls_storage_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "secretyakub20apr"
 		}
 	},
 	"variables": {
@@ -21,7 +21,7 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_copy')]",
+			"name": "[concat(parameters('factoryName'), '/pl_copy')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -73,14 +73,14 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "ds_source2",
+								"referenceName": "ds_source",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "2ds_sink",
+								"referenceName": "ds_sink",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -94,17 +94,17 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_source2')]",
-				"[concat(variables('factoryId'), '/datasets/2ds_sink')]"
+				"[concat(variables('factoryId'), '/datasets/ds_source')]",
+				"[concat(variables('factoryId'), '/datasets/ds_sink')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/2ds_sink')]",
+			"name": "[concat(parameters('factoryName'), '/ds_sink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "2Ls_storage",
+					"referenceName": "ls_storage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -121,16 +121,16 @@
 				"schema": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/2Ls_storage')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_storage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ds_source2')]",
+			"name": "[concat(parameters('factoryName'), '/ds_source')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "2Ls_storage",
+					"referenceName": "ls_storage",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
@@ -158,34 +158,43 @@
 				]
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/2Ls_storage')]"
+				"[concat(variables('factoryId'), '/linkedServices/ls_storage')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/2Ls_storage')]",
+			"name": "[concat(parameters('factoryName'), '/LS_AKV')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"type": "AzureBlobStorage",
+				"type": "AzureKeyVault",
 				"typeProperties": {
-					"connectionString": "[parameters('2Ls_storage_connectionString')]"
+					"baseUrl": "[parameters('LS_AKV_properties_typeProperties_baseUrl')]"
 				}
 			},
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LS_STORAGE')]",
+			"name": "[concat(parameters('factoryName'), '/ls_storage')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"type": "AzureBlobStorage",
 				"typeProperties": {
-					"connectionString": "[parameters('LS_STORAGE_connectionString')]"
+					"connectionString": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LS_AKV",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "[parameters('ls_storage_properties_typeProperties_connectionString_secretName')]"
+					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_AKV')]"
+			]
 		}
 	]
 }

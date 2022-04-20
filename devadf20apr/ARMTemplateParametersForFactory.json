@@ -5,11 +5,11 @@
 		"factoryName": {
 			"value": "devadf20apr"
 		},
-		"2Ls_storage_connectionString": {
-			"value": ""
+		"LS_AKV_properties_typeProperties_baseUrl": {
+			"value": "https://azkeyvault20apr.vault.azure.net/"
 		},
-		"LS_STORAGE_connectionString": {
-			"value": ""
+		"ls_storage_properties_typeProperties_connectionString_secretName": {
+			"value": "secretyakub20apr"
 		}
 	}
 }
